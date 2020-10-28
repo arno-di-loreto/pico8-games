@@ -51,7 +51,7 @@ function make_player()
 	player.y=60
 	player.gravity=0.2 -- bigger means falls faster
 	player.y_speed=0 --fallspeed
-	player.dy_up=4 --when up pressed  
+	player.dy_up=5 --when up pressed  
 	player.spr_up=4 --sprites
 	player.spr_down=5
 	player.spr_dead=6
