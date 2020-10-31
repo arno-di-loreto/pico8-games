@@ -9,18 +9,36 @@ function _init()
 	game={}
 	game.last_time=time()
 	game.delta_time=0
+	objects={}
+	add(objects,make_object(30,30,8,8))
+	add(objects,make_object(48,89,8,8))
+	add(objects,make_object(100,20,8,8))
 end
 
 function _update()
 	game.delta_time=time()-game.last_time
 	game.last_time=time()
 	update_player(game.delta_time)
-	update_player(game.delta_time)
+	
+	for i=1,#objects do
+		local o=objects[i]
+		if object_collide(player.object,o) then
+			o.c=8
+		else
+			o.c=7
+		end
+	end
+	
 end
 
 function _draw()
 	cls()
 	rectfill(0,0,128,128,5)
+	
+	for i=1,#objects do
+		draw_object(objects[i])
+	end
+	
 	draw_player()
 end
 -->8
@@ -33,10 +51,16 @@ function make_player()
 	player.y = (128 - player.height)/2
 	player.x_speed=0
 	player.y_speed=0
-	player.max_speed=1.2
+	player.max_speed=3
 	player.acceleration=0.7
 	player.friction=0.90
 	player.sprite = make_sprite(2,6,6,true)
+	player.object = make_object(
+															player.x,
+															player.y,
+															player.width,
+															player.height)
+	
 end
 
 function move_player()
@@ -81,6 +105,8 @@ function move_player()
 		player.y = 0
 		player.y_speed=0
 	end
+	
+	update_object(player.object,player.x,player.y)
 
 end
 
@@ -90,8 +116,8 @@ function update_player(delta_time)
 end
 
 function draw_player()
-	print("x speed:"..player.x_speed,2,2,11)
-	print("y speed:"..player.y_speed,2,12,11)
+	--print("x:"..player.object.x_min,2,2,11)
+	--print("y:"..player.object.y_min,2,12,11)
 	draw_sprite(player.sprite,
 													player.x,
 													player.y)
@@ -134,6 +160,37 @@ end
 
 function draw_sprite(sprite,x,y)
 	spr(sprite.frames[sprite.current],x,y)
+end
+-->8
+-- object
+
+function make_object(x,y,w,h)
+	local obj={}
+	obj.w=w
+	obj.h=h
+	obj.c=7
+	update_object(obj,x,y)
+	return obj
+end
+
+function update_object(o,x,y)
+	o.x_min=x
+	o.y_min=y
+	o.x_max=o.x_min+o.w
+	o.y_max=o.y_min+o.h
+end
+
+function object_collide(b,a)
+	local no_collision =
+	 (a.x_max < b.x_min) or 
+	 (b.x_max < a.x_min) or
+	 (a.y_max < b.y_min) or
+	 (b.y_max < a.y_min)
+	return not no_collision
+end
+
+function draw_object(o)
+	rect(o.x_min,o.y_min,o.x_max,o.y_max,o.c)
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
